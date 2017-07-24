@@ -1,0 +1,234 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Star catalogue analysis\n",
+    "\n",
+    "Thanks to UCF Physics undergrad Tyler Townsend for contributing to the development of this notebook."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Import modules that contain functions we need\n",
+    "import pandas as pd\n",
+    "import numpy as np\n",
+    "%matplotlib inline\n",
+    "import matplotlib.pyplot as plt"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Getting the data"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Read in data that will be used for the calculations.\n",
+    "# Using pandas read_csv method, we can create a data frame\n",
+    "data = pd.read_csv(\"https://raw.githubusercontent.com/merryjman/astronomy/master/stars.csv\")\n",
+    "datatwo = pd.read_csv(\"https://raw.githubusercontent.com/astronexus/HYG-Database/master/hygdata_v3.csv\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": false,
+    "scrolled": true
+   },
+   "outputs": [],
+   "source": [
+    "# We wish to look at the first 12 rows of our data set\n",
+    "\n",
+    "data.head(12)\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Star map"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "fig = plt.figure(figsize=(15, 4))\n",
+    "plt.scatter(data.ra,data.dec, s=0.01)\n",
+    "plt.xlim(24, 0)\n",
+    "plt.title(\"All the Stars in the Catalogue\")\n",
+    "plt.xlabel('right ascension (hours)')\n",
+    "plt.ylabel('declination (degrees)')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Let's Graph a Constellation!"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# These are the abbreviations for all the constellations\n",
+    "datatwo.sort_values('con').con.unique()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# This shows just one constellation.\n",
+    "datatwo_con = datatwo.query('con == \"UMa\"')\n",
+    "\n",
+    "#Define a variable called \"name\" so I don't have to keep renaming the plot title!\n",
+    "name = \"Ursa Major\"\n",
+    "\n",
+    "# This plots where the brightest 15 stars are in the sky\n",
+    "datatwo_con = datatwo_con.sort_values('mag').head(15)\n",
+    "plt.scatter(datatwo_con.ra,datatwo_con.dec)\n",
+    "plt.gca().invert_xaxis()\n",
+    "\n",
+    "# I graphed first without the line below, to see what it looks like, then\n",
+    "# I added the plt.xlim(25,20) to make it look nicer.\n",
+    "\n",
+    "plt.xlim(15,8)\n",
+    "plt.ylim(30,70)\n",
+    "plt.title('%s In the Sky'%(name))\n",
+    "plt.xlabel('right ascension (hours)')\n",
+    "plt.ylabel('declination (degrees)')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Let's Go Back in Time!"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# What did this constellation look like 50,000 years ago??\n",
+    "plt.scatter(datatwo_con.ra-datatwo_con.pmra/1000/3600/15*50000,datatwo_con.dec-datatwo_con.pmdec/1000/3600*50000)\n",
+    "plt.xlim(15,8)\n",
+    "plt.ylim(30,70)\n",
+    "\n",
+    "plt.title('%s Fifty Thousand Years Ago!'%(name))\n",
+    "plt.xlabel('right ascension (hours)')\n",
+    "plt.ylabel('declination (degrees)')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Let's Go Into the Future!"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Now, let's try looking at what this same constellation will look like in 50,000 years!\n",
+    "plt.scatter(datatwo_con.ra+datatwo_con.pmra/1000/3600/15*50000,datatwo_con.dec+datatwo_con.pmdec/1000/3600*50000)\n",
+    "\n",
+    "plt.xlim(15,8)\n",
+    "plt.ylim(30,70)\n",
+    "plt.title('%s Fifty Thousand Years From Now!'%(name))\n",
+    "plt.xlabel('right ascension (hours)')\n",
+    "plt.ylabel('declination (degrees)')\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Now you try one of your own!"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "# Make a Hertzsprung-Russell Diagram!"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# References\n",
+    "- The data came from [The Astronomy Nexus](http://www.astronexus.com/hyg) and their colletion of the Hipparcos, Yale Bright Star, and Gliese catalogues ([huge zip file here](http://www.astronexus.com/files/downloads/hygdata_v3.csv.gz)).\n",
+    "- Reversed H-R diagram from [The Electric Universe](http://www.holoscience.com/wp/twinkle-twinkle-electric-star/)\n",
+    "- Many thanks to Adam Lamee and his colleagues at codingink12.org for basically making this whole thing."
+   ]
+  }
+ ],
+ "metadata": {
+  "anaconda-cloud": {},
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.5.2"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 0
+}
